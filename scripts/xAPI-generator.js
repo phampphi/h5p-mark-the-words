@@ -54,12 +54,14 @@ H5P.MarkTheWords.XapiGenerator = (function ($) {
       'en-US': replaceLineBreaks(markTheWords.params.taskDescription)
     };
     definition.type = 'http://adlnet.gov/expapi/activities/cmi.interaction';
-    definition.interactionType = 'choice';
+    definition.interactionType = 'long-choice';
     definition.correctResponsesPattern = [getCorrectResponsesPattern(markTheWords)];
     definition.choices = getChoices(markTheWords);
     definition.extensions = {
       'https://h5p.org/x-api/line-breaks': markTheWords.getIndexesOfLineBreaks()
     };
+    // Add title for h5p-php-reporting
+    definition.extensions.title = markTheWords.getTitle();
     return definition;
   }
 

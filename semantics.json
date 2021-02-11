@@ -21,7 +21,12 @@
       "hr",
       "pre",
       "code"
-    ]
+    ],
+    "font": {
+      "size": true,
+      "color": true,
+      "background": true
+    }
   },
   {
     "label": "Textfield",
@@ -36,6 +41,11 @@
       "em",
       "code"
     ],
+    "font": {
+      "size": true,
+      "color": true,
+      "background": true
+    },
     "placeholder": "This is an answer: *answer*.",
     "description": "",
     "important": {

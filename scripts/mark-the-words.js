@@ -300,6 +300,8 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
         self.hideButton('check-answer');
         self.trigger(self.XapiGenerator.generateAnsweredEvent());
         self.toggleSelectable(true);
+        if (self.params.behaviour.enableTranscript)
+          self.showButton('show-transcript');
       }, true, {
         'aria-label': this.params.a11yCheck,
       });
@@ -326,6 +328,15 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
     }, false, {
       'aria-label': this.params.a11yShowSolution,
     });
+
+    if (self.params.behaviour.enableTranscript){
+      self.addButton('show-transcript', 'Transcript', function () {
+        self.showTranscript();
+        self.hideButton('show-transcript');
+      }, false, {
+        'aria-label': 'Transcript',
+      });
+    }
   };
 
   /**
@@ -576,6 +587,8 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
     this.$a11yClickableTextLabel.html(this.params.a11yClickableTextLabel);
 
     this.toggleSelectable(false);
+    this.hideTranscript();
+    this.hideButton('show-transcript');
     this.trigger('resize');
   };
 
@@ -625,6 +638,32 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
    * @see {@link https://github.com/h5p/h5p-question/blob/1558b6144333a431dd71e61c7021d0126b18e252/scripts/question.js#L1236|Called from H5P.Question}
    */
   MarkTheWords.prototype.registerDomElements = function () {
+    // Check for task media
+    var media = this.params.media;
+    if (media && media.type && media.type.library) {
+      media = media.type;
+      var type = media.library.split(' ')[0];
+      if (type === 'H5P.Image') {
+        if (media.params.file) {
+          // Register task image
+          this.setImage(media.params.file.path, {
+            disableImageZooming: this.params.media.disableImageZooming || false,
+            alt: media.params.alt,
+            title: media.params.title
+          });
+        }
+      }
+      else if (type === 'H5P.Video') {
+        if (media.params.sources) {
+          // Register task video
+          this.setVideo(media);
+        }
+      }
+      else if (type == 'H5P.Audio' && media.params.files?.length > 0){
+        this.setAudio(this.contentId, media.params);
+      }
+    }
+
     // wrap introduction in div with id
     var introduction = '<div id="' + this.introductionId + '">' + this.params.taskDescription + '</div>';
 
